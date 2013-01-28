@@ -21,10 +21,20 @@ class superglobals extends atoum\test
 			->array->setByReferenceWith($superglobals->_POST)->isReferenceTo($_POST)
 			->array->setByReferenceWith($superglobals->_FILES)->isReferenceTo($_FILES)
 			->array->setByReferenceWith($superglobals->_COOKIE)->isReferenceTo($_COOKIE)
-			->array->setByReferenceWith($superglobals->_SESSION)->isReferenceTo($_SESSION)
 			->array->setByReferenceWith($superglobals->_REQUEST)->isReferenceTo($_REQUEST)
 			->array->setByReferenceWith($superglobals->_ENV)->isReferenceTo($_ENV)
 		;
+	}
+
+	public function test__getSession()
+	{
+		if (extension_loaded('session') === false)
+		{
+			$this->skip('It\'s not possible to use $_SESSION when the Session extension is not enabled');
+		}
+
+		$superglobals = new atoum\superglobals();
+		$this->array->setByReferenceWith($superglobals->_SESSION)->isReferenceTo($_SESSION);
 	}
 
 	public function test__set()
@@ -76,12 +86,6 @@ class superglobals extends atoum\test
 			->string($superglobals->_COOKIE)->isEqualTo($variable)
 		;
 
-		$superglobals->_SESSION = ($variable = uniqid());
-
-		$this->assert
-			->string($superglobals->_SESSION)->isEqualTo($variable)
-		;
-
 		$superglobals->_REQUEST = ($variable = uniqid());
 
 		$this->assert
@@ -92,6 +96,21 @@ class superglobals extends atoum\test
 
 		$this->assert
 			->string($superglobals->_ENV)->isEqualTo($variable)
+		;
+	}
+
+	public function test__setSession()
+	{
+		if (extension_loaded('session') === false)
+		{
+			$this->skip('It\'s not possible to use $_SESSION when the Session extension is not enabled');
+		}
+
+		$superglobals = new atoum\superglobals();
+		$superglobals->_SESSION = ($variable = uniqid());
+
+		$this->assert
+			->string($superglobals->_SESSION)->isEqualTo($variable)
 		;
 	}
 }
