@@ -1262,7 +1262,7 @@ class generator extends atoum\test
 			"\t\t" . '\mageekguy\atoum\mock\controller::getForMock($this)->reset();' . PHP_EOL .
 			"\t\t" . 'return $this;' . PHP_EOL .
 			"\t" . '}' . PHP_EOL .
-			"\t" . 'protected  $phpUnitMockdefinition;' . PHP_EOL .
+			"\t" . 'protected $phpUnitMockdefinition;' . PHP_EOL .
 			"\t" . 'public function getMockDefinition()' . PHP_EOL .
 			"\t" . '{' . PHP_EOL .
 			"\t\t" . 'if (null === $this->phpUnitMockdefinition)' . PHP_EOL .

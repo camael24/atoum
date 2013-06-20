@@ -22,7 +22,7 @@ class generator extends atoum\test\mock\generator
 
 	protected static function generateMockControllerMethods()
 	{
-		$code = parent::generateMockControllerMethods() .
+		return parent::generateMockControllerMethods() .
 			"\t" . 'protected $phpUnitMockdefinition;' . PHP_EOL .
 			"\t" . 'public function getMockDefinition()' . PHP_EOL .
 			"\t" . '{' . PHP_EOL .
@@ -37,8 +37,6 @@ class generator extends atoum\test\mock\generator
 			"\t\t" . 'return $this->getMockDefinition()->expects($expectation);' . PHP_EOL .
 			"\t" . '}' . PHP_EOL
 		;
-
-		return $code;
 	}
 
 	protected static function generateUnknownClassCode($class, $mockNamespace, $mockClass)
