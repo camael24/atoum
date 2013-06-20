@@ -1,7 +1,5 @@
 <?php
 
-//namespace mageekguy\atoum;
-
 require_once __DIR__ . '/runner.php';
 
 if (class_exists('\\PHPUnit_Framework_TestCase') === false)

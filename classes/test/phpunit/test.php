@@ -250,10 +250,13 @@ abstract class test extends atoum\test
 				return $self;
 			})
 			->setHandler('assertGreaterThanOrEqual', function($expected, $actual, $failMessage = null) use ($self) {
-				$self->integer($actual)->isGreaterThanOrEqualTo($expected, $failMessage);
+				return $self->integer($actual)->isGreaterThanOrEqualTo($expected, $failMessage);
+			})
+			->setHandler('assertGreaterThan', function($expected, $actual, $failMessage = null) use ($self) {
+				return $self->integer($actual)->isGreaterThan($expected, $failMessage);
 			})
 			->setHandler('assertRegExp', function($expected, $actual, $failMessage = null) use ($self) {
-				$self->string($actual)->match($expected, $failMessage);
+				return $self->string($actual)->match($expected, $failMessage);
 			})
 			->setHandler('exactly', function($value) {
 				return $value;
@@ -296,6 +299,18 @@ abstract class test extends atoum\test
 			})
 			->setHandler('assertFileExists', function($expected, $failMessage = null) use ($self) {
 				return $self->boolean(file_exists($expected))->isTrue(sprintf($failMessage ?: 'File %s does not exist', $expected));
+			})
+			->setHandler('assertStringStartsWith', function($expected, $actual, $failMessage = null) use ($self) {
+				return $self->string($actual)->match('/^' . preg_quote($expected, '/') . '/', $failMessage);
+			})
+			->setHandler('assertAttributeEquals', function($expected, $attribute, $object, $failMessage = null) use ($self) {
+				$class = is_object($object) ? new \ReflectionObject($object) : new \ReflectionClass($object);
+				$property = $class->getProperty($attribute);
+				$property->setAccessible(true);
+				$actual = $property->getValue($object);
+				$property->setAccessible(false);
+
+				return $self->variable($actual)->isEqualTo($expected, $failMessage);
 			})
 		;
 
