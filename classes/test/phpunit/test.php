@@ -11,19 +11,19 @@ use
 
 abstract class test extends atoum\test
 {
-	protected $unsupportedMethods = array();
-	protected $mocks = array();
+	const defaultNamespace = '#^#';
 
-	public function __construct(adapter $adapter = null, annotations\extractor $annotationExtractor = null, asserter\generator $asserterGenerator = null, test\assertion\manager $assertionManager = null, \closure $reflectionClassFactory = null)
-	{
-		parent::__construct($adapter, $annotationExtractor, $asserterGenerator, $assertionManager, $reflectionClassFactory);
-
-		$this->setNamespace('#^#');
-	}
+	private $unsupportedMethods = array();
+	private $mocks = array();
 
 	public function setMockGenerator(atoum\test\mock\generator $generator = null)
 	{
 		return parent::setMockGenerator($generator ?: new phpunit\mock\generator($this));
+	}
+
+	public function setMockControllerLinker(atoum\mock\controller\linker $linker = null)
+	{
+		return parent::setMockControllerLinker($linker ?: new phpunit\mock\controller\linker($this));
 	}
 
 	public function addUnsupportedMethod($testMethod, $reason)
@@ -57,16 +57,6 @@ abstract class test extends atoum\test
 		if(isset($this->unsupportedMethods[$testMethod])) {
 			$this->skip($this->unsupportedMethods[$testMethod]);
 		}
-	}
-
-	public function afterTestMethod($testMethod)
-	{
-		$this->assertMocks();
-	}
-
-	public function afterTestMethodDataSet($testMethod, $key, array $arguments)
-	{
-		$this->assertMocks();
 	}
 
 	protected function assertMocks()
@@ -185,6 +175,10 @@ abstract class test extends atoum\test
 				}
 			})
 			->setHandler('markTestSkipped', function($skipMessage) use ($self) {
+				foreach($self->getMocks() as $mock) {
+					$mock->getMockDefinition()->reset();
+				}
+
 				return $self->skip($skipMessage);
 			})
 			->setHandler('getMock', function($class, $methods = array(), $args = array(), $mockClassName = null, $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false) use ($self) {
@@ -221,12 +215,20 @@ abstract class test extends atoum\test
 				return $mockBuilder;
 			})
 			->setHandler('setExpectedException', function($class) use ($self) {
+				foreach($self->getMocks() as $mock) {
+					$mock->getMockDefinition()->reset();
+				}
+
 				return $self->skip('Testing exception is not available');
 			})
 			->setHandler('assertFileEquals', function($expected, $actual, $failMessage = null) use ($self) {
 				return $self->string(file_get_contents($actual))->isEqualToContentsOffile($expected, $failMessage);
 			})
 			->setHandler('getMockForAbstractClass', function() use ($self) {
+				foreach($self->getMocks() as $mock) {
+					$mock->getMockDefinition()->reset();
+				}
+
 				return $self->skip('PHPUnit mocks are not available');
 			})
 			->setHandler('assertInternalType', function($expected, $actual, $failMessage = null) use ($self) {

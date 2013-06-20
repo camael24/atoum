@@ -4,7 +4,8 @@ namespace mageekguy\atoum\tests\units\test\phpunit;
 
 use
 	mageekguy\atoum,
-	mageekguy\atoum\mock
+	mageekguy\atoum\mock,
+	mageekguy\atoum\test\phpunit
 ;
 
 require_once __DIR__ . '/../../../runner.php';
@@ -31,7 +32,7 @@ class test extends atoum\test
 				->array($test->getMethodTags())->isEmpty()
 				->array($test->getDataProviders())->isEmpty()
 				->boolean($test->codeCoverageIsEnabled())->isEqualTo(extension_loaded('xdebug'))
-				->string($test->getTestNamespace())->isEqualTo(atoum\test::defaultNamespace)
+				->string($test->getTestNamespace())->isEqualTo(phpunit\test::defaultNamespace)
 				->variable($test->getBootstrapFile())->isNull()
 				->array($test->getClassPhpVersions())->isEmpty()
 				->array($test->getMandatoryClassExtensions())->isEmpty()

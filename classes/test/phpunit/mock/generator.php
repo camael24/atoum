@@ -23,7 +23,7 @@ class generator extends atoum\test\mock\generator
 	protected static function generateMockControllerMethods()
 	{
 		$code = parent::generateMockControllerMethods() .
-			"\t" . 'protected  $phpUnitMockdefinition;' . PHP_EOL .
+			"\t" . 'protected $phpUnitMockdefinition;' . PHP_EOL .
 			"\t" . 'public function getMockDefinition()' . PHP_EOL .
 			"\t" . '{' . PHP_EOL .
 			"\t\t" . 'if (null === $this->phpUnitMockdefinition)' . PHP_EOL .
@@ -77,12 +77,12 @@ class generator extends atoum\test\mock\generator
 		);
 
 		return 'namespace ' . ltrim($mockNamespace, '\\') . ' {' . PHP_EOL .
-		'final class ' . $mockClass . ' implements \\' . ($addIteratorAggregate === false ? '' : 'iteratorAggregate, \\') . $class->getName() . ', \\' . __NAMESPACE__ . '\\aggregator' . PHP_EOL .
-		'{' . PHP_EOL .
-		static::generateMockControllerMethods() .
-		$this->generateInterfaceMethodCode($class, $addIteratorAggregate) .
-		'}' . PHP_EOL .
-		'}'
-			;
+			'final class ' . $mockClass . ' implements \\' . ($addIteratorAggregate === false ? '' : 'iteratorAggregate, \\') . $class->getName() . ', \\' . __NAMESPACE__ . '\\aggregator' . PHP_EOL .
+			'{' . PHP_EOL .
+			static::generateMockControllerMethods() .
+			$this->generateInterfaceMethodCode($class, $addIteratorAggregate) .
+			'}' . PHP_EOL .
+			'}'
+		;
 	}
 }

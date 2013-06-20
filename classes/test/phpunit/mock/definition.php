@@ -51,7 +51,11 @@ class definition extends atoum\test\mock\generator
 
 	public function method($name)
 	{
+		$mockController = atoum\mock\controller::getForMock($this->mock);
+
 		$this->currentMethod = $name;
+		$mockController->{$this->currentMethod} = null;
+
 		$this->assertions[$name][] = array(
 			'calls' => $this->currentExpect,
 			'args' => null
@@ -92,8 +96,6 @@ class definition extends atoum\test\mock\generator
 		$this->reset();
 
 		foreach($assertions as $method => $expectations) {
-			var_dump($method, $expectations, $this->mock->getMockController()->getCalls());
-
 			foreach($expectations as $expect) {
 				$assert = $test->mock($this->mock)->call($method);
 
