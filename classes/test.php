@@ -14,6 +14,7 @@ abstract class test implements observable, \countable
 {
 	const testMethodPrefix = 'test';
 	const defaultNamespace = '#(?:^|\\\)tests?\\\units?\\\#i';
+	const defaultTestedClass = '#$#i';
 	const runStart = 'testRunStart';
 	const beforeSetUp = 'beforeTestSetUp';
 	const afterSetUp = 'afterTestSetUp';
@@ -72,6 +73,7 @@ abstract class test implements observable, \countable
 	private $classHasNotVoidMethods = false;
 
 	private static $namespace = null;
+	private static $testedClass = null;
 	private static $defaultEngine = self::defaultEngine;
 
 	public function __construct(adapter $adapter = null, annotations\extractor $annotationExtractor = null, asserter\generator $asserterGenerator = null, test\assertion\manager $assertionManager = null, \closure $reflectionClassFactory = null)
@@ -1078,6 +1080,21 @@ abstract class test implements observable, \countable
 		return self::$namespace ?: static::defaultNamespace;
 	}
 
+	public static function setTestedClass($testedClass)
+	{
+		self::$testedClass = $testedClass;
+
+		if (self::$testedClass === '')
+		{
+			throw new exceptions\logic\invalidArgument('Tested class must not be empty');
+		}
+	}
+
+	public static function getTestedClass()
+	{
+		return self::$testedClass ?: static::defaultTestedClass;
+	}
+
 	public static function setDefaultEngine($defaultEngine)
 	{
 		self::$defaultEngine = (string) $defaultEngine;
@@ -1115,6 +1132,8 @@ abstract class test implements observable, \countable
 
 			$testedClassName = substr($fullyQualifiedClassName, 0, $position) . substr($fullyQualifiedClassName, $position + 1 + strlen($testNamespace));
 		}
+
+		$testedClassName = preg_replace(self::getTestedClass(), '', $testedClassName);
 
 		return trim($testedClassName, '\\');
 	}
