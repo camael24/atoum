@@ -6,9 +6,9 @@ use
 	mageekguy\atoum,
 	mageekguy\atoum\asserter,
 	mageekguy\atoum\annotations,
-	mageekguy\atoum\test\phpunit
-	;
-use mageekguy\atoum\adapter;
+	mageekguy\atoum\test\phpunit,
+	mageekguy\atoum\adapter
+;
 
 abstract class test extends atoum\test
 {
@@ -257,34 +257,34 @@ abstract class test extends atoum\test
 				return $self->string($actual)->match($expected, $failMessage);
 			})
 			->setHandler('exactly', function($value) {
-				return $value;
+				return new phpunit\mock\definition\expectations\exactly($value);
 			})
-			->setHandler('once', function() {
-				return 1;
+			->setHandler('once', function() use ($self) {
+				return $self->exactly(1);
 			})
 			->setHandler('atLeastOnce', function() {
-				return '>=1';
+				return new phpunit\mock\definition\expectations\atLeastOnce();
 			})
 			->setHandler('never', function() {
-				return 0;
-			})
-			->setHandler('returnCallback', function($value) {
-				return $value;
-			})
-			->setHandler('returnValue', function($value) {
-				return $value;
+				return new phpunit\mock\definition\expectations\never();
 			})
 			->setHandler('any', function() {
 				return null;
 			})
 			->setHandler('at', function($index) {
-				return '@:' . ($index + 1);
+				return $index + 1;
+			})
+			->setHandler('returnCallback', function($value) {
+				return new phpunit\mock\definition\call\returning($value);
+			})
+			->setHandler('returnValue', function($value) {
+				return new phpunit\mock\definition\call\returning($value);
 			})
 			->setHandler('equalTo', function($value) {
 				return $value;
 			})
-			->setHandler('isInstanceOf', function($value) {
-				return $value;
+			->setHandler('isInstanceOf', function() use ($self) {
+				$self->skip('isInstanceOf is not supported');
 			})
 			->setHandler('identicalTo', function($value) {
 				return $value;
@@ -296,10 +296,10 @@ abstract class test extends atoum\test
 				$self->skip('stringContains is not supported');
 			})
 			->setHandler('onConsecutiveCalls', function() {
-				return new phpunit\call\consecutive(func_get_args());
+				return new phpunit\mock\definition\call\consecutive(func_get_args());
 			})
 			->setHandler('throwException', function(\exception $exception) {
-				return new phpunit\call\throwing($exception);
+				return new phpunit\mock\definition\call\throwing($exception);
 			})
 			->setHandler('fail', function($failMessage = null) use ($self) {
 				throw new atoum\asserter\exception($failMessage);
