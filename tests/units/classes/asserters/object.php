@@ -130,4 +130,50 @@ class object extends atoum\test
 				->object($asserter->toString())->isInstanceOf('mageekguy\atoum\asserters\castToString')
 		;
 	}
+
+	public function testIsInstanceOf()
+	{
+		$this
+			->if($asserter = new asserters\object($generator = new asserter\generator()))
+			->then
+				->exception(function() use ($asserter) {
+						$asserter->isInstanceOf($asserter);
+					}
+				)
+					->isInstanceOf('mageekguy\atoum\exceptions\logic')
+					->hasMessage('Object is undefined')
+			->if($asserter->setWith($test = $this))
+			->then
+				->exception(function() use ($asserter) {
+						$asserter->isInstanceOf($asserter);
+					}
+				)
+					->isInstanceOf('mageekguy\atoum\asserter\exception')
+					->hasMessage(sprintf($generator->getLocale()->_('%s is not an instance of %s'), $asserter->getTypeOf($test), $asserter->getTypeOf($asserter)))
+				->object($asserter->isInstanceOf($test))->isIdenticalTo($asserter)
+		;
+	}
+
+	public function testIsNotInstanceOf()
+	{
+		$this
+			->if($asserter = new asserters\object($generator = new asserter\generator()))
+			->then
+				->exception(function() use ($asserter) {
+						$asserter->isNotInstanceOf($asserter);
+					}
+				)
+					->isInstanceOf('mageekguy\atoum\exceptions\logic')
+					->hasMessage('Object is undefined')
+			->if($asserter->setWith($test = $this))
+			->then
+				->exception(function() use ($asserter, $test) {
+						$asserter->isNotInstanceOf($test);
+					}
+				)
+					->isInstanceOf('mageekguy\atoum\asserter\exception')
+					->hasMessage(sprintf($generator->getLocale()->_('%s is an instance of %1$s'), $asserter->getTypeOf($test)))
+				->object($asserter->isNotInstanceOf($asserter))->isIdenticalTo($asserter)
+		;
+	}
 }
