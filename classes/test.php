@@ -1133,7 +1133,7 @@ abstract class test implements observable, \countable
 			$testedClassName = substr($fullyQualifiedClassName, 0, $position) . substr($fullyQualifiedClassName, $position + 1 + strlen($testNamespace));
 		}
 
-		$testedClassName = preg_replace(self::getTestedClass(), '', $testedClassName);
+		$testedClassName = preg_replace(self::getTestedClass(), '$1', $testedClassName);
 
 		return trim($testedClassName, '\\');
 	}
